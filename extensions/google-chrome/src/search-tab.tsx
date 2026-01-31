@@ -11,7 +11,7 @@ export default function Command() {
 
   return (
     errorView ?? (
-      <List isLoading={isLoading} onSearchTextChange={setSearchText}>
+      <List isLoading={isLoading} onSearchTextChange={setSearchText} throttle={true}>
         {data.map((tab) => (
           <ChromeListItems.TabList key={tab.key()} tab={tab} useOriginalFavicon={useOriginalFavicon} />
         ))}

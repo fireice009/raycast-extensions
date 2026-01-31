@@ -4,6 +4,7 @@ import { getFavicon } from "@raycast/utils";
 
 export interface Preferences {
   readonly useOriginalFavicon: boolean;
+  readonly sortTabsByLatestActiveTime: boolean;
   readonly openTabInProfile: SettingsProfileOpenBehaviour;
   readonly profilePath: string;
 }
@@ -40,12 +41,26 @@ export class Tab {
     public readonly windowsId: number,
     public readonly tabIndex: number,
     public readonly sourceLine: string,
+    public readonly windowIndex: number = 0,
+    public readonly isActive: boolean = false,
   ) {}
 
   static parse(line: string): Tab {
     const parts = line.split(this.TAB_CONTENTS_SEPARATOR);
 
-    return new Tab(parts[0], parts[1], parts[2], +parts[3], +parts[4], line);
+    const windowIndex = parts[5] ? Number(parts[5]) : 0;
+    const isActive = parts[6] === "true";
+
+    return new Tab(
+      parts[0],
+      parts[1],
+      parts[2],
+      Number(parts[3]),
+      Number(parts[4]),
+      line,
+      Number.isFinite(windowIndex) ? windowIndex : 0,
+      isActive,
+    );
   }
 
   key(): string {

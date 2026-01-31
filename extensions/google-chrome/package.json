@@ -91,6 +91,13 @@
       "subtitle": "Google Chrome",
       "description": "Open the current active tab's URL in a new Chrome Guest window.",
       "mode": "no-view"
+    },
+    {
+      "name": "track-active-tab",
+      "title": "Track Active Tab",
+      "subtitle": "Google Chrome",
+      "description": "Track the active tab to support sorting tabs by latest active time.",
+      "mode": "menu-bar"
     }
   ],
   "tools": [
@@ -385,6 +392,15 @@
       "name": "useOriginalFavicon",
       "required": false,
       "title": "Favicon",
+      "type": "checkbox"
+    },
+    {
+      "default": false,
+      "description": "When enabled, tabs will be sorted by most recently active first, then by the existing order. Note: due to Chrome limitations, this uses the current active tab and tabs activated from Raycast as signals.",
+      "label": "Sort tabs by latest active time",
+      "name": "sortTabsByLatestActiveTime",
+      "required": false,
+      "title": "Tab Sorting",
       "type": "checkbox"
     },
     {

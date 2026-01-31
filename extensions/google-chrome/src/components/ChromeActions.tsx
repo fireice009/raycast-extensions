@@ -78,7 +78,13 @@ function HistoryItemActions({
 
   return (
     <ActionPanel title={title}>
-      <Action onAction={() => openNewTab({ url, profileOriginal, profileCurrent, openTabInProfile })} title={"Open"} />
+      <Action
+        onAction={async () => {
+          await openNewTab({ url, profileOriginal, profileCurrent, openTabInProfile });
+          await closeMainWindow();
+        }}
+        title={"Open"}
+      />
       <Action
         title="Open in Guest Window"
         icon={{ source: Icon.Person }}
@@ -89,25 +95,27 @@ function HistoryItemActions({
       />
       <ActionPanel.Section title={"Open in profile"}>
         <Action
-          onAction={() =>
-            openNewTab({
+          onAction={async () => {
+            await openNewTab({
               url,
               profileOriginal,
               profileCurrent,
               openTabInProfile: SettingsProfileOpenBehaviour.ProfileCurrent,
-            })
-          }
+            });
+            await closeMainWindow();
+          }}
           title={"Open in Current Profile"}
         />
         <Action
-          onAction={() =>
-            openNewTab({
+          onAction={async () => {
+            await openNewTab({
               url,
               profileOriginal,
               profileCurrent,
               openTabInProfile: SettingsProfileOpenBehaviour.ProfileOriginal,
-            })
-          }
+            });
+            await closeMainWindow();
+          }}
           title={"Open in Original Profile"}
         />
       </ActionPanel.Section>
@@ -119,8 +127,9 @@ function HistoryItemActions({
 function GoToTab(props: { tab: Tab }) {
   async function handleAction() {
     try {
-      await setActiveTab(props.tab);
+      // Close Raycast before activating Chrome to avoid falling back to the root window.
       await closeMainWindow();
+      await setActiveTab(props.tab);
     } catch (e) {
       if (e instanceof Error) {
         throw new Error("Issue with tab: '" + props.tab.sourceLine + "'\n" + e.message);

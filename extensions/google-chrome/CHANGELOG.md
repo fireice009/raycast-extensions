@@ -1,5 +1,11 @@
 # Google Chrome Changelog
 
+## [Tab Sorting] - 2026-01-28
+
+- Add optional preference to sort tabs by latest active time
+- Improve search responsiveness by avoiding repeated tab fetches while typing
+- Add optional menu bar command "Track Active Tab" to keep last-active data updated when Raycast is closed
+
 ## [Fixes] - 2026-01-05
 
 - Fix infinite rendering with depth bug in new tab `Action`

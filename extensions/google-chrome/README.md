@@ -29,6 +29,10 @@ The extension supports advanced search functionality with exclude terms:
 
 _Note_:
 
+You can optionally enable **"Sort tabs by latest active time"** in the extension preferences to prioritize recently active tabs.
+
+If you want this to reflect tab switches made directly in Chrome (even when Raycast is closed), enable the **"Track Active Tab"** menu bar command. Otherwise, you can skip it and sorting will still work while the search list is open.
+
 Open profile support is limited to opening tab in new profile window. You can customize default tab opening behaviour in settings.
 
 If you are using `Default` mode and have multiple profiles open in parallel, the tab will open in the topmost window.

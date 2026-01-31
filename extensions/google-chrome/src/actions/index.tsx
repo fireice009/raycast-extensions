@@ -1,8 +1,9 @@
 import { runAppleScript } from "run-applescript";
 import { LocalStorage, popToRoot } from "@raycast/api";
-import { SettingsProfileOpenBehaviour, Tab } from "../interfaces";
-import { NOT_INSTALLED_MESSAGE } from "../constants";
 import { runAppleScript as runAppleScriptRaycast, showFailureToast } from "@raycast/utils";
+import { NOT_INSTALLED_MESSAGE } from "../constants";
+import { SettingsProfileOpenBehaviour, Tab } from "../interfaces";
+import { readTabLastActiveMap, touchTabLastActive, writeTabLastActiveMap } from "../util/tab-last-active";
 
 export async function getOpenTabs(useOriginalFavicon: boolean): Promise<Tab[]> {
   const faviconFormula = useOriginalFavicon
@@ -12,8 +13,7 @@ export async function getOpenTabs(useOriginalFavicon: boolean): Promise<Tab[]> {
 
   await checkAppInstalled();
 
-  try {
-    const openTabs = await runAppleScript(`
+  const script = `
       set _output to ""
       tell application "Google Chrome"
         repeat with w in windows
@@ -29,7 +29,10 @@ export async function getOpenTabs(useOriginalFavicon: boolean): Promise<Tab[]> {
         end repeat
       end tell
       return _output
-  `);
+    `;
+
+  try {
+    const openTabs = await runAppleScript(script);
 
     return openTabs
       .split("\n")
@@ -129,6 +132,12 @@ export async function setActiveTab(tab: Tab): Promise<void> {
     end tell
     return true
   `);
+
+  const lastActiveMap = await readTabLastActiveMap();
+  const changed = touchTabLastActive(lastActiveMap, tab.url);
+  if (changed) {
+    await writeTabLastActiveMap(lastActiveMap);
+  }
 }
 
 export async function closeActiveTab(tab: Tab): Promise<void> {
@@ -250,6 +259,22 @@ export async function getActiveTabURL(): Promise<string> {
     tell application "Google Chrome"
       try
         return URL of active tab of front window
+      on error
+        return ""
+      end try
+    end tell
+  `);
+
+  return url;
+}
+
+export async function getFrontmostActiveTabURL(): Promise<string> {
+  await checkAppInstalled();
+
+  const url = await runAppleScript(`
+    tell application "Google Chrome"
+      try
+        return URL of active tab of window 1
       on error
         return ""
       end try

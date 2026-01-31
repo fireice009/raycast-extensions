@@ -36,8 +36,8 @@ export default function Command() {
 
   return (
     <List
-      // loading appears not to matter, but leaving it case it handles a case that I'm unaware of
-      isLoading={isLoadingTab || isLoadingHistory || isLoadingBookmark}
+      // Render tabs as soon as possible; history/bookmarks can load progressively.
+      isLoading={isLoadingTab}
       onSearchTextChange={setSearchText}
       throttle={true}
       searchBarAccessory={<ChromeProfileDropDown onProfileSelected={revalidate} />}
@@ -55,7 +55,11 @@ export default function Command() {
         )}
       </List.Section>
 
-      {historyData.length === 0 ? (
+      {isLoadingHistory ? (
+        <List.Section title="History">
+          <List.Item title="Loading history..." />
+        </List.Section>
+      ) : historyData.length === 0 ? (
         <List.Section title="History">
           <List.Item title="No history found" />
         </List.Section>
@@ -70,7 +74,9 @@ export default function Command() {
       )}
 
       <List.Section title="Bookmarks">
-        {bookmarkData.length === 0 ? (
+        {isLoadingBookmark ? (
+          <List.Item title="Loading bookmarks..." />
+        ) : bookmarkData.length === 0 ? (
           <List.Item title="No bookmarks found" key={"empty bookmark list item"} />
         ) : (
           bookmarkData.map((e) => <ChromeListItems.TabHistory key={e.id} entry={e} profile={profile} type="Bookmark" />)
